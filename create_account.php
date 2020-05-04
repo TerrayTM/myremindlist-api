@@ -48,7 +48,7 @@ if (!$database_connection->query("INSERT INTO verification (code, userID, type) 
     die(json_encode(array("error" => "VERIFICATION_CODE_ERROR")));
 }
 
-//Load Composor's autoloader
+//Load Composer's autoloader
 require "./vendor/autoload.php";
 
 //Import PHPMailer

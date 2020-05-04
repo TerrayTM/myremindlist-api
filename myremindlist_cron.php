@@ -1,7 +1,10 @@
 <?php
 
 //Connect to database
-include dirname(__FILE__)."/database_connect.php";
+include __DIR__."/database_connect.php";
+
+//SMS is disabled for now
+$enable_sms = false;
 
 //Find active reminds and check if they need to be sent
 $query = $database_connection->query("SELECT * FROM reminds WHERE time <= ".time().";");
@@ -18,8 +21,8 @@ if (count($active_reminds) < 1) {
     exit;
 }
 
-//Load Composor's autoloader
-require dirname(__FILE__)."/vendor/autoload.php";
+//Load Composer's autoloader
+require __DIR__."/vendor/autoload.php";
 
 //Import libraries
 use Twilio\Rest\Client;
@@ -69,7 +72,7 @@ function sendSMS($client, $number, $message) {
     );
 }
 
-//Initalize mailing service
+//Initialize mailing service
 $mail = new PHPMailer(true);
 $mail->isSMTP();
 $mail->SMTPKeepAlive = true;
@@ -83,8 +86,11 @@ $mail->setFrom('service@myremindlist.com', 'MyRemindList.com');
 $mail->isHTML(true);
 $mail->Subject = 'MyRemindList - Remind';
 
-//Initalize SMS service
-$client = new Client("******", "******");
+//Initialize SMS service
+$client = null;
+if ($enable_sms) {
+    $client = new Client("******", "******");
+}
 
 //Send reminds
 foreach ($active_reminds as $key => $value) {
